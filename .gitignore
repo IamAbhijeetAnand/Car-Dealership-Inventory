@@ -1,0 +1,10 @@
+# Ignore node_modules everywhere
+node_modules
+**/node_modules
+
+# Environment files
+.env
+.env.*
+
+# Ignore prompts
+PROMPTS.md
