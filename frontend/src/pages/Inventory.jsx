@@ -3,6 +3,7 @@ import { fetchVehicles, purchaseVehicle } from '../services/vehicleService';
 import { VehicleCard } from '../components/vehicle/VehicleCard';
 import { VehicleFilterBar } from '../components/vehicle/VehicleFilterBar';
 import { RestockModal } from '../components/vehicle/RestockModal';
+import { TestDriveModal } from '../components/vehicle/TestDriveModal';
 import { LoadingSpinner } from '../components/common/LoadingSpinner';
 import { ToastContext } from '../context/ToastContext';
 import { useAuth } from '../hooks/useAuth';
@@ -32,8 +33,9 @@ export const Inventory = () => {
   // Debounced search query
   const debouncedSearch = useDebounce(filters.search, 400);
 
-  // Restock Modal state
+  // Modal states
   const [restockVehicleItem, setRestockVehicleItem] = useState(null);
+  const [testDriveVehicleItem, setTestDriveVehicleItem] = useState(null);
 
   const loadInventory = useCallback(async () => {
     setLoading(true);
@@ -92,14 +94,22 @@ export const Inventory = () => {
     }
   };
 
+  const handleBookTestDrive = (vehicle) => {
+    if (!isAuthenticated) {
+      addToast('Please sign in to book a test drive.', 'error');
+      return;
+    }
+    setTestDriveVehicleItem(vehicle);
+  };
+
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8 relative z-10">
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-extrabold text-white tracking-tight">Dealership Fleet Inventory</h1>
+          <h1 className="text-3xl font-extrabold text-white tracking-tight">Explore Fleet Inventory</h1>
           <p className="text-sm text-slate-400 mt-1">
-            Browse and filter available vehicles with real-time stock sync
+            Browse all vehicles present in our dealership inventory with real-time multi-criteria filtering
           </p>
         </div>
         <div className="px-4 py-2 rounded-xl bg-slate-800/80 border border-slate-700 text-xs text-cyan-400 font-semibold flex items-center gap-2 self-start">
@@ -117,7 +127,7 @@ export const Inventory = () => {
 
       {/* Grid or Loader */}
       {loading ? (
-        <LoadingSpinner label="Querying vehicle inventory databases..." />
+        <LoadingSpinner label="Querying vehicle inventory database..." />
       ) : vehicles.length === 0 ? (
         <div className="text-center py-16 glass-panel rounded-2xl border border-slate-800 space-y-3">
           <Car className="w-12 h-12 text-slate-600 mx-auto" />
@@ -137,6 +147,7 @@ export const Inventory = () => {
               key={v._id}
               vehicle={v}
               onPurchase={handlePurchase}
+              onBookTestDrive={handleBookTestDrive}
               isAdmin={isAdmin}
               onRestock={(vItem) => setRestockVehicleItem(vItem)}
             />
@@ -177,6 +188,16 @@ export const Inventory = () => {
           onClose={() => setRestockVehicleItem(null)}
           vehicle={restockVehicleItem}
           onSuccess={loadInventory}
+          addToast={addToast}
+        />
+      )}
+
+      {/* Customer Test Drive Modal */}
+      {testDriveVehicleItem && (
+        <TestDriveModal
+          isOpen={!!testDriveVehicleItem}
+          onClose={() => setTestDriveVehicleItem(null)}
+          vehicle={testDriveVehicleItem}
           addToast={addToast}
         />
       )}

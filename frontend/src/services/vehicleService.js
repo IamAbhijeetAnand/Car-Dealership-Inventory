@@ -49,3 +49,24 @@ export const fetchAllTransactions = async () => {
   const response = await api.get('/inventory/all-transactions');
   return response.data;
 };
+
+// Test Drive Endpoints
+export const bookTestDrive = async (bookingData) => {
+  const response = await api.post('/test-drive/book', bookingData);
+  return response.data;
+};
+
+export const fetchMyTestDrives = async () => {
+  const response = await api.get('/test-drive/my-bookings');
+  return response.data;
+};
+
+export const fetchAllTestDrives = async () => {
+  const response = await api.get('/test-drive/all-bookings');
+  return response.data;
+};
+
+export const updateTestDriveStatus = async (id, status) => {
+  const response = await api.patch(`/test-drive/${id}/status`, { status });
+  return response.data;
+};

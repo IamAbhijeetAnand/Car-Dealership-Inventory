@@ -5,7 +5,8 @@ import { formatCurrency, formatMileage } from '../utils/formatters';
 import { ToastContext } from '../context/ToastContext';
 import { useAuth } from '../hooks/useAuth';
 import { LoadingSpinner } from '../components/common/LoadingSpinner';
-import { Fuel, Gauge, Zap, Star, ShieldCheck, ShoppingBag, ArrowLeft, CheckCircle2 } from 'lucide-react';
+import { TestDriveModal } from '../components/vehicle/TestDriveModal';
+import { Fuel, Gauge, Zap, Star, ShieldCheck, ShoppingBag, ArrowLeft, CheckCircle2, CalendarCheck } from 'lucide-react';
 
 export const VehicleDetails = () => {
   const { id } = useParams();
@@ -16,6 +17,7 @@ export const VehicleDetails = () => {
   const [vehicle, setVehicle] = useState(null);
   const [loading, setLoading] = useState(true);
   const [purchasing, setPurchasing] = useState(false);
+  const [isTestDriveOpen, setIsTestDriveOpen] = useState(false);
 
   useEffect(() => {
     const loadVehicle = async () => {
@@ -50,11 +52,20 @@ export const VehicleDetails = () => {
     }
   };
 
+  const handleBookTestDrive = () => {
+    if (!isAuthenticated) {
+      addToast('Please sign in to book a test drive', 'error');
+      navigate('/login');
+      return;
+    }
+    setIsTestDriveOpen(true);
+  };
+
   if (loading) return <LoadingSpinner label="Fetching vehicle spec sheet..." />;
   if (!vehicle) return <div className="text-center py-20 text-white">Vehicle not found.</div>;
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8 relative z-10">
       <button
         onClick={() => navigate(-1)}
         className="text-xs font-semibold text-slate-400 hover:text-white flex items-center gap-1 transition-colors"
@@ -89,7 +100,7 @@ export const VehicleDetails = () => {
           {/* Pricing Banner */}
           <div className="p-6 rounded-2xl bg-gradient-to-r from-slate-900 to-slate-800 border border-cyan-500/30 flex items-center justify-between">
             <div>
-              <span className="text-xs text-slate-400 block">MSRP List Price</span>
+              <span className="text-xs text-slate-400 block">Showroom Price</span>
               <span className="text-3xl font-black text-cyan-400">{formatCurrency(vehicle.price)}</span>
             </div>
             <div className="text-right">
@@ -134,23 +145,41 @@ export const VehicleDetails = () => {
             </div>
           )}
 
-          {/* Purchase Action Button */}
-          <div className="pt-4">
+          {/* Action Buttons */}
+          <div className="pt-4 flex flex-col sm:flex-row gap-4">
+            <button
+              onClick={handleBookTestDrive}
+              className="flex-1 py-4 rounded-2xl text-base font-extrabold bg-slate-800 text-cyan-400 border border-cyan-500/30 hover:bg-cyan-500/10 flex items-center justify-center gap-2 transition-all"
+            >
+              <CalendarCheck className="w-5 h-5 text-cyan-400" />
+              Book Test Drive
+            </button>
+
             <button
               onClick={handlePurchase}
               disabled={vehicle.stockQuantity === 0 || purchasing}
-              className="w-full py-4 rounded-2xl text-base font-extrabold bg-gradient-to-r from-cyan-500 to-blue-600 text-white shadow-xl shadow-cyan-500/25 disabled:opacity-50 hover:opacity-95 flex items-center justify-center gap-2 transition-all"
+              className="flex-1 py-4 rounded-2xl text-base font-extrabold bg-gradient-to-r from-cyan-500 to-blue-600 text-white shadow-xl shadow-cyan-500/25 disabled:opacity-50 hover:opacity-95 flex items-center justify-center gap-2 transition-all"
             >
               <ShoppingBag className="w-5 h-5" />
               {purchasing
-                ? 'Executing Atomic Transaction...'
+                ? 'Processing...'
                 : vehicle.stockQuantity > 0
                 ? 'Purchase Vehicle Now'
-                : 'Vehicle Currently Sold Out'}
+                : 'Sold Out'}
             </button>
           </div>
         </div>
       </div>
+
+      {/* Test Drive Modal */}
+      {isTestDriveOpen && (
+        <TestDriveModal
+          isOpen={isTestDriveOpen}
+          onClose={() => setIsTestDriveOpen(false)}
+          vehicle={vehicle}
+          addToast={addToast}
+        />
+      )}
     </div>
   );
 };

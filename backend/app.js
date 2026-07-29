@@ -14,6 +14,7 @@ const vehicleRoutes = require('./routes/vehicleRoutes');
 const inventoryRoutes = require('./routes/inventoryRoutes');
 const aiRoutes = require('./routes/aiRoutes');
 const analyticsRoutes = require('./routes/analyticsRoutes');
+const testDriveRoutes = require('./routes/testDriveRoutes');
 
 const app = express();
 
@@ -57,6 +58,7 @@ app.use('/api/v1/vehicles', vehicleRoutes);
 app.use('/api/v1/inventory', inventoryRoutes);
 app.use('/api/v1/ai', aiRoutes);
 app.use('/api/v1/analytics', analyticsRoutes);
+app.use('/api/v1/test-drive', testDriveRoutes);
 
 // Fallback Middleware
 app.use(notFound);

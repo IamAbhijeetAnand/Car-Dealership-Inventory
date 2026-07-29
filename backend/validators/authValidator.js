@@ -21,8 +21,12 @@ const registerValidator = [
     .withMessage('Password must be at least 8 characters long'),
   body('role')
     .optional()
-    .isIn(['customer', 'admin'])
-    .withMessage('Role must be either customer or admin'),
+    .custom((value) => {
+      if (value === 'admin') {
+        throw new Error('Admin registration is disabled. Admin accounts are managed directly by database administrator.');
+      }
+      return true;
+    }),
 ];
 
 const loginValidator = [

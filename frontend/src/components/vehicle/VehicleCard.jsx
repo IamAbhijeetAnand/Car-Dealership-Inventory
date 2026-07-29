@@ -1,9 +1,9 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { formatCurrency, formatMileage } from '../../utils/formatters';
-import { Fuel, Gauge, Zap, Star, ShoppingBag, Eye } from 'lucide-react';
+import { Fuel, Gauge, Zap, Star, ShoppingBag, Eye, CalendarCheck } from 'lucide-react';
 
-export const VehicleCard = ({ vehicle, onPurchase, isAdmin, onRestock, onEdit, onDelete }) => {
+export const VehicleCard = ({ vehicle, onPurchase, onBookTestDrive, isAdmin, onRestock, onDelete }) => {
   const isAvailable = vehicle.stockQuantity > 0;
   const isLowStock = vehicle.stockQuantity > 0 && vehicle.stockQuantity <= 2;
 
@@ -35,9 +35,9 @@ export const VehicleCard = ({ vehicle, onPurchase, isAdmin, onRestock, onEdit, o
           )}
         </div>
 
-        {/* Price Tag */}
+        {/* Price Tag in INR */}
         <div className="absolute bottom-3 right-3">
-          <span className="px-3 py-1.5 rounded-xl text-lg font-extrabold bg-cyan-500 text-slate-950 shadow-lg">
+          <span className="px-3 py-1.5 rounded-xl text-base font-extrabold bg-cyan-500 text-slate-950 shadow-lg">
             {formatCurrency(vehicle.price)}
           </span>
         </div>
@@ -62,32 +62,44 @@ export const VehicleCard = ({ vehicle, onPurchase, isAdmin, onRestock, onEdit, o
         <div className="grid grid-cols-3 gap-2 py-3 border-y border-slate-800 text-xs text-slate-400">
           <div className="flex flex-col items-center p-2 rounded-lg bg-slate-800/40">
             <Fuel className="w-4 h-4 text-cyan-400 mb-1" />
-            <span>{vehicle.fuelType}</span>
+            <span className="truncate max-w-full">{vehicle.fuelType}</span>
           </div>
           <div className="flex flex-col items-center p-2 rounded-lg bg-slate-800/40">
             <Zap className="w-4 h-4 text-cyan-400 mb-1" />
-            <span>{vehicle.transmission}</span>
+            <span className="truncate max-w-full">{vehicle.transmission}</span>
           </div>
           <div className="flex flex-col items-center p-2 rounded-lg bg-slate-800/40">
             <Gauge className="w-4 h-4 text-cyan-400 mb-1" />
-            <span>{formatMileage(vehicle.mileage)}</span>
+            <span className="truncate max-w-full">{formatMileage(vehicle.mileage)}</span>
           </div>
         </div>
 
         {/* Action Buttons */}
-        <div className="flex items-center gap-2 pt-1">
-          <Link
-            to={`/vehicle/${vehicle._id}`}
-            className="flex-1 px-3 py-2.5 rounded-xl text-xs font-semibold bg-slate-800 text-slate-200 hover:bg-slate-700 hover:text-white flex items-center justify-center gap-1.5 transition-colors"
-          >
-            <Eye className="w-4 h-4" />
-            Details
-          </Link>
+        <div className="flex flex-col gap-2 pt-1">
+          <div className="flex items-center gap-2">
+            <Link
+              to={`/vehicle/${vehicle._id}`}
+              className="flex-1 px-3 py-2.5 rounded-xl text-xs font-semibold bg-slate-800 text-slate-200 hover:bg-slate-700 hover:text-white flex items-center justify-center gap-1.5 transition-colors"
+            >
+              <Eye className="w-4 h-4" />
+              Details
+            </Link>
+
+            {onBookTestDrive && (
+              <button
+                onClick={() => onBookTestDrive(vehicle)}
+                className="flex-1 px-3 py-2.5 rounded-xl text-xs font-semibold bg-slate-800/90 text-cyan-400 border border-cyan-500/30 hover:bg-cyan-500/10 flex items-center justify-center gap-1.5 transition-all"
+              >
+                <CalendarCheck className="w-4 h-4 text-cyan-400" />
+                Test Drive
+              </button>
+            )}
+          </div>
 
           {isAvailable && onPurchase && (
             <button
               onClick={() => onPurchase(vehicle)}
-              className="flex-1 px-3 py-2.5 rounded-xl text-xs font-semibold bg-gradient-to-r from-cyan-500 to-blue-600 text-white shadow-md shadow-cyan-500/20 hover:opacity-95 flex items-center justify-center gap-1.5 transition-all"
+              className="w-full px-3 py-2.5 rounded-xl text-xs font-semibold bg-gradient-to-r from-cyan-500 to-blue-600 text-white shadow-md shadow-cyan-500/20 hover:opacity-95 flex items-center justify-center gap-1.5 transition-all"
             >
               <ShoppingBag className="w-4 h-4" />
               Buy Now
@@ -95,20 +107,20 @@ export const VehicleCard = ({ vehicle, onPurchase, isAdmin, onRestock, onEdit, o
           )}
 
           {isAdmin && (
-            <div className="flex gap-1">
+            <div className="flex gap-1 pt-1">
               <button
                 onClick={() => onRestock(vehicle)}
-                className="p-2 rounded-xl text-xs font-medium bg-amber-500/10 text-amber-400 hover:bg-amber-500/20"
+                className="flex-1 p-2 rounded-xl text-xs font-medium bg-amber-500/10 text-amber-400 hover:bg-amber-500/20"
                 title="Restock Inventory"
               >
-                +Stock
+                +Restock
               </button>
               <button
                 onClick={() => onDelete(vehicle._id)}
-                className="p-2 rounded-xl text-xs font-medium bg-rose-500/10 text-rose-400 hover:bg-rose-500/20"
+                className="px-3 p-2 rounded-xl text-xs font-medium bg-rose-500/10 text-rose-400 hover:bg-rose-500/20"
                 title="Delete Vehicle"
               >
-                Del
+                Delete
               </button>
             </div>
           )}

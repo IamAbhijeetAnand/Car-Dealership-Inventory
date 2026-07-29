@@ -1,11 +1,18 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { fetchAdminDashboardMetrics, fetchVehicles, deleteVehicle, fetchAllTransactions } from '../services/vehicleService';
+import {
+  fetchAdminDashboardMetrics,
+  fetchVehicles,
+  deleteVehicle,
+  fetchAllTransactions,
+  fetchAllTestDrives,
+  updateTestDriveStatus,
+} from '../services/vehicleService';
 import { formatCurrency, formatDate } from '../utils/formatters';
 import { ToastContext } from '../context/ToastContext';
 import { RestockModal } from '../components/vehicle/RestockModal';
 import { AddVehicleModal } from '../components/vehicle/AddVehicleModal';
 import { LoadingSpinner } from '../components/common/LoadingSpinner';
-import { ShieldAlert, Plus, PackagePlus, Trash2, DollarSign, Car, ShoppingBag, Users, AlertTriangle } from 'lucide-react';
+import { ShieldAlert, Plus, PackagePlus, Trash2, DollarSign, Car, ShoppingBag, CalendarCheck, AlertTriangle } from 'lucide-react';
 
 export const AdminDashboard = () => {
   const { addToast } = useContext(ToastContext);
@@ -13,9 +20,10 @@ export const AdminDashboard = () => {
   const [metrics, setMetrics] = useState(null);
   const [vehicles, setVehicles] = useState([]);
   const [transactions, setTransactions] = useState([]);
+  const [testDrives, setTestDrives] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const [activeTab, setActiveTab] = useState('inventory'); // 'inventory' | 'transactions'
+  const [activeTab, setActiveTab] = useState('inventory'); // 'inventory' | 'transactions' | 'testDrives'
 
   // Modals
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
@@ -24,14 +32,16 @@ export const AdminDashboard = () => {
   const loadData = async () => {
     setLoading(true);
     try {
-      const [mRes, vRes, tRes] = await Promise.all([
+      const [mRes, vRes, tRes, tdRes] = await Promise.all([
         fetchAdminDashboardMetrics(),
         fetchVehicles({ limit: 50 }),
         fetchAllTransactions(),
+        fetchAllTestDrives(),
       ]);
       setMetrics(mRes.data);
-      setVehicles(vRes.data.vehicles);
-      setTransactions(tRes.data);
+      setVehicles(vRes.data.vehicles || []);
+      setTransactions(tRes.data || []);
+      setTestDrives(tdRes.data || []);
     } catch (err) {
       addToast('Failed to load admin metrics', 'error');
     } finally {
@@ -54,10 +64,20 @@ export const AdminDashboard = () => {
     }
   };
 
+  const handleUpdateTestDriveStatus = async (id, newStatus) => {
+    try {
+      await updateTestDriveStatus(id, newStatus);
+      addToast(`Test drive status updated to ${newStatus}`, 'success');
+      loadData();
+    } catch (err) {
+      addToast('Failed to update status', 'error');
+    }
+  };
+
   if (loading) return <LoadingSpinner label="Loading Executive Admin Console..." />;
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8 relative z-10">
       {/* Admin Title */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
@@ -104,10 +124,10 @@ export const AdminDashboard = () => {
 
           <div className="glass-card p-6 rounded-2xl border border-slate-800">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold text-slate-400 uppercase">Low Stock Alerts</span>
-              <AlertTriangle className="w-5 h-5 text-amber-400" />
+              <span className="text-xs font-semibold text-slate-400 uppercase">Test Drive Bookings</span>
+              <CalendarCheck className="w-5 h-5 text-amber-400" />
             </div>
-            <p className="text-2xl font-black text-amber-400 mt-2">{metrics.lowStockAlerts?.length || 0} Models</p>
+            <p className="text-2xl font-black text-amber-400 mt-2">{testDrives.length} Requests</p>
           </div>
         </div>
       )}
@@ -125,6 +145,16 @@ export const AdminDashboard = () => {
           Vehicle Inventory ({vehicles.length})
         </button>
         <button
+          onClick={() => setActiveTab('testDrives')}
+          className={`pb-3 text-sm font-bold transition-colors border-b-2 ${
+            activeTab === 'testDrives'
+              ? 'border-cyan-400 text-cyan-400'
+              : 'border-transparent text-slate-400 hover:text-white'
+          }`}
+        >
+          Test Drive Requests ({testDrives.length})
+        </button>
+        <button
           onClick={() => setActiveTab('transactions')}
           className={`pb-3 text-sm font-bold transition-colors border-b-2 ${
             activeTab === 'transactions'
@@ -132,11 +162,11 @@ export const AdminDashboard = () => {
               : 'border-transparent text-slate-400 hover:text-white'
           }`}
         >
-          All Dealership Transactions ({transactions.length})
+          Transactions Ledger ({transactions.length})
         </button>
       </div>
 
-      {/* Inventory Management Table */}
+      {/* Tab Content */}
       {activeTab === 'inventory' ? (
         <div className="glass-panel rounded-2xl border border-slate-800 overflow-hidden">
           <div className="overflow-x-auto">
@@ -188,6 +218,68 @@ export const AdminDashboard = () => {
                           <Trash2 className="w-4 h-4" />
                         </button>
                       </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      ) : activeTab === 'testDrives' ? (
+        /* Test Drive Admin Table */
+        <div className="glass-panel rounded-2xl border border-slate-800 overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-sm text-slate-300">
+              <thead className="bg-slate-900/90 text-xs font-semibold text-slate-400 uppercase border-b border-slate-800">
+                <tr>
+                  <th className="px-6 py-4">Booking ID</th>
+                  <th className="px-6 py-4">Customer</th>
+                  <th className="px-6 py-4">Vehicle</th>
+                  <th className="px-6 py-4">Scheduled Date</th>
+                  <th className="px-6 py-4">Slot</th>
+                  <th className="px-6 py-4">Status</th>
+                  <th className="px-6 py-4 text-right">Update Status</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-800">
+                {testDrives.map((td) => (
+                  <tr key={td._id} className="hover:bg-slate-800/40 transition-colors">
+                    <td className="px-6 py-4 font-mono text-xs text-cyan-400 font-bold">{td.bookingId}</td>
+                    <td className="px-6 py-4">
+                      <p className="font-semibold text-white">{td.user?.name}</p>
+                      <p className="text-xs text-slate-400">{td.contactPhone}</p>
+                    </td>
+                    <td className="px-6 py-4 font-semibold text-white">
+                      {td.vehicle ? `${td.vehicle.make} ${td.vehicle.model}` : 'N/A'}
+                    </td>
+                    <td className="px-6 py-4 font-semibold">{formatDate(td.preferredDate)}</td>
+                    <td className="px-6 py-4 text-xs">{td.preferredTimeSlot}</td>
+                    <td className="px-6 py-4">
+                      <span
+                        className={`px-2.5 py-1 rounded-full text-xs font-bold ${
+                          td.status === 'Confirmed'
+                            ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30'
+                            : td.status === 'Completed'
+                            ? 'bg-cyan-500/10 text-cyan-400 border border-cyan-500/30'
+                            : td.status === 'Cancelled'
+                            ? 'bg-rose-500/10 text-rose-400 border border-rose-500/30'
+                            : 'bg-amber-500/10 text-amber-400 border border-amber-500/30'
+                        }`}
+                      >
+                        {td.status}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 text-right">
+                      <select
+                        value={td.status}
+                        onChange={(e) => handleUpdateTestDriveStatus(td._id, e.target.value)}
+                        className="px-3 py-1.5 bg-slate-900 border border-slate-700 rounded-lg text-xs text-white focus:border-cyan-500"
+                      >
+                        <option value="Pending">Pending</option>
+                        <option value="Confirmed">Confirm Booking</option>
+                        <option value="Completed">Completed</option>
+                        <option value="Cancelled">Cancel</option>
+                      </select>
                     </td>
                   </tr>
                 ))}
