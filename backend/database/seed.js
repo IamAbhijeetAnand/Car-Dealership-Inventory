@@ -11,9 +11,9 @@ const sampleVehicles = [
   {
     vin: '1HGCR2F83HA123456',
     make: 'Honda',
-    model: 'Accord Touring',
+    model: 'Accord Hybrid',
     year: 2024,
-    price: 38900,
+    price: 3890000, // ₹38,90,000
     stockQuantity: 4,
     category: 'Sedan',
     fuelType: 'Hybrid',
@@ -29,17 +29,17 @@ const sampleVehicles = [
   {
     vin: '4T1B11HK5RU789101',
     make: 'Toyota',
-    model: 'RAV4 Prime XSE',
+    model: 'Fortuner Legender',
     year: 2024,
-    price: 45200,
+    price: 4520000, // ₹45,20,000
     stockQuantity: 3,
     category: 'SUV',
-    fuelType: 'Plug-in Hybrid',
+    fuelType: 'Diesel',
     transmission: 'Automatic',
     mileage: 450,
-    color: 'Supersonic Red',
+    color: 'Supersonic White',
     safetyRating: 5,
-    features: ['AWD', 'Panoramic Moonroof', 'JBL Audio System', 'Power Liftgate'],
+    features: ['4x4 AWD', 'JBL Audio System', 'Power Tailgate', 'Ventilated Seats'],
     imageUrls: [
       'https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?auto=format&fit=crop&q=80&w=1000',
     ],
@@ -49,7 +49,7 @@ const sampleVehicles = [
     make: 'Tesla',
     model: 'Model 3 Long Range',
     year: 2024,
-    price: 47990,
+    price: 4799000, // ₹47,99,000
     stockQuantity: 5,
     category: 'Electric',
     fuelType: 'Electric',
@@ -67,7 +67,7 @@ const sampleVehicles = [
     make: 'BMW',
     model: 'X5 xDrive40i',
     year: 2024,
-    price: 68500,
+    price: 9850000, // ₹98,50,000
     stockQuantity: 2,
     category: 'SUV',
     fuelType: 'Gasoline',
@@ -81,19 +81,19 @@ const sampleVehicles = [
     ],
   },
   {
-    vin: '1FTFW1ED4MFC45678',
-    make: 'Ford',
-    model: 'F-150 Lightning Flash',
+    vin: 'MAH777XUV888AX700',
+    make: 'Mahindra',
+    model: 'XUV700 AX7 Luxury',
     year: 2024,
-    price: 73495,
-    stockQuantity: 1,
-    category: 'Truck',
-    fuelType: 'Electric',
+    price: 2699000, // ₹26,99,000
+    stockQuantity: 6,
+    category: 'SUV',
+    fuelType: 'Diesel',
     transmission: 'Automatic',
     mileage: 800,
-    color: 'Antimatter Blue',
-    safetyRating: 4,
-    features: ['Pro Power Onboard', 'Tow Technology Package', 'BlueCruise 1.2', 'Extended Range Battery'],
+    color: 'Midnight Black',
+    safetyRating: 5,
+    features: ['ADAS Level 2', 'Sony 3D Audio', 'Panoramic Skyroof', 'Dual 10.25 Displays'],
     imageUrls: [
       'https://images.unsplash.com/photo-1583121274602-3e2820c69888?auto=format&fit=crop&q=80&w=1000',
     ],
@@ -102,7 +102,8 @@ const sampleVehicles = [
 
 const seedDB = async () => {
   try {
-    await mongoose.connect(env.MONGO_URI);
+    const connectDB = require('../config/db');
+    await connectDB();
     console.log('[Seed] Connected to MongoDB...');
 
     // Clear existing collections
@@ -112,7 +113,7 @@ const seedDB = async () => {
     console.log('[Seed] Cleared existing data...');
 
     // Create Admin and Customer Users
-    const admin = await User.create({
+    await User.create({
       name: 'Dealership Admin',
       email: 'admin@dealership.com',
       password: 'AdminPassword123!',
@@ -120,7 +121,7 @@ const seedDB = async () => {
       isVerified: true,
     });
 
-    const customer = await User.create({
+    await User.create({
       name: 'John Customer',
       email: 'customer@gmail.com',
       password: 'CustomerPassword123!',
@@ -134,9 +135,9 @@ const seedDB = async () => {
 
     // Create Sample Inventory
     const createdVehicles = await Vehicle.insertMany(sampleVehicles);
-    console.log(`[Seed] Inserted ${createdVehicles.length} vehicles into inventory.`);
+    console.log(`[Seed] Inserted ${createdVehicles.length} Indian market vehicles into inventory.`);
 
-    process.exit();
+    process.exit(0);
   } catch (error) {
     console.error('[Seed Error] Failed:', error);
     process.exit(1);

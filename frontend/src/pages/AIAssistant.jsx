@@ -9,7 +9,7 @@ export const AIAssistant = () => {
   const { addToast } = useContext(ToastContext);
 
   const [formData, setFormData] = useState({
-    budget: 50000,
+    budget: 4500000, // ₹45,00,000 (45 Lakhs default)
     familySize: 4,
     fuelPreference: 'Any',
     transmission: 'Any',
@@ -40,7 +40,7 @@ export const AIAssistant = () => {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-10">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-10 relative z-10">
       {/* Banner */}
       <div className="text-center max-w-3xl mx-auto space-y-4">
         <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 text-xs font-semibold uppercase tracking-wider">
@@ -60,7 +60,7 @@ export const AIAssistant = () => {
           </h3>
 
           <form onSubmit={handleSubmit} className="space-y-4 text-sm">
-            {/* Budget Slider */}
+            {/* Budget Slider in INR */}
             <div>
               <div className="flex justify-between mb-1">
                 <label className="font-semibold text-slate-300">Max Budget Target</label>
@@ -68,9 +68,9 @@ export const AIAssistant = () => {
               </div>
               <input
                 type="range"
-                min="15000"
-                max="120000"
-                step="2500"
+                min="1000000"
+                max="15000000"
+                step="250000"
                 value={formData.budget}
                 onChange={(e) => handleChange('budget', Number(e.target.value))}
                 className="w-full accent-cyan-500"

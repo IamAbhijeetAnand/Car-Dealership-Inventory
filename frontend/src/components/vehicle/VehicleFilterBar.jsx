@@ -11,7 +11,7 @@ export const VehicleFilterBar = ({ filters, onFilterChange, onReset }) => {
           <Search className="absolute left-4 top-3.5 w-5 h-5 text-slate-400" />
           <input
             type="text"
-            placeholder="Search by make, model, or VIN (e.g. Honda, Tesla, RAV4)..."
+            placeholder="Search by make, model, or VIN (e.g. Honda, Tesla, Fortuner)..."
             value={filters.search || ''}
             onChange={(e) => onFilterChange('search', e.target.value)}
             className="w-full pl-12 pr-4 py-3 bg-slate-900/80 border border-slate-700/80 rounded-xl text-sm text-white placeholder-slate-400 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-colors"
@@ -97,14 +97,14 @@ export const VehicleFilterBar = ({ filters, onFilterChange, onReset }) => {
           </select>
         </div>
 
-        {/* Max Price Range */}
+        {/* Max Price Range in INR */}
         <div>
           <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1.5">
-            Max Budget ($)
+            Max Budget (₹ INR)
           </label>
           <input
             type="number"
-            placeholder="e.g. 50000"
+            placeholder="e.g. 5000000"
             value={filters.maxPrice || ''}
             onChange={(e) => onFilterChange('maxPrice', e.target.value)}
             className="w-full px-3 py-2.5 bg-slate-900 border border-slate-700/80 rounded-xl text-sm text-slate-200 focus:border-cyan-500"

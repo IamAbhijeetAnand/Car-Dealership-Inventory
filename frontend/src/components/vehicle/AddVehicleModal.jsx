@@ -56,7 +56,7 @@ export const AddVehicleModal = ({ isOpen, onClose, onSuccess, addToast }) => {
             <label className="block mb-1 font-medium">Make</label>
             <input
               {...register('make', { required: 'Make is required' })}
-              placeholder="e.g. Toyota"
+              placeholder="e.g. Mahindra"
               className="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-white"
             />
           </div>
@@ -65,7 +65,7 @@ export const AddVehicleModal = ({ isOpen, onClose, onSuccess, addToast }) => {
             <label className="block mb-1 font-medium">Model</label>
             <input
               {...register('model', { required: 'Model is required' })}
-              placeholder="e.g. Camry"
+              placeholder="e.g. XUV700"
               className="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-white"
             />
           </div>
@@ -80,11 +80,11 @@ export const AddVehicleModal = ({ isOpen, onClose, onSuccess, addToast }) => {
           </div>
 
           <div>
-            <label className="block mb-1 font-medium">Price ($ USD)</label>
+            <label className="block mb-1 font-medium">Price (₹ INR)</label>
             <input
               type="number"
               {...register('price', { required: 'Price is required' })}
-              placeholder="29990"
+              placeholder="2699000"
               className="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-white"
             />
           </div>
@@ -120,7 +120,7 @@ export const AddVehicleModal = ({ isOpen, onClose, onSuccess, addToast }) => {
           </div>
 
           <div>
-            <label className="block mb-1 font-medium">Mileage (Miles)</label>
+            <label className="block mb-1 font-medium">Mileage (Odometer in KM)</label>
             <input
               type="number"
               {...register('mileage', { required: true })}
@@ -143,7 +143,7 @@ export const AddVehicleModal = ({ isOpen, onClose, onSuccess, addToast }) => {
           <label className="block mb-1 font-medium">Features (Comma Separated)</label>
           <input
             {...register('featuresString')}
-            placeholder="Sunroof, Leather Seats, Autopilot, AWD"
+            placeholder="Sunroof, ADAS Level 2, Leather Seats, Autopilot"
             className="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-white"
           />
         </div>

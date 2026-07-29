@@ -7,12 +7,19 @@ import { Sparkles, ShieldCheck, Zap, ArrowRight, Car, CheckCircle2, TrendingUp, 
 export const Home = () => {
   const [featuredVehicles, setFeaturedVehicles] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [scrollY, setScrollY] = useState(0);
+
+  useEffect(() => {
+    const handleScroll = () => setScrollY(window.scrollY);
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   useEffect(() => {
     const loadFeatured = async () => {
       try {
         const res = await fetchVehicles({ limit: 3, sortBy: 'createdAt', sortOrder: 'desc' });
-        setFeaturedVehicles(res.data.vehicles);
+        setFeaturedVehicles(res.data.vehicles || []);
       } catch (err) {
         console.error('Failed to load featured vehicles', err);
       } finally {
@@ -22,12 +29,41 @@ export const Home = () => {
     loadFeatured();
   }, []);
 
+  // Calculate smooth video fade opacity based on scroll position (fades from 1 -> 0 over first 600px of scroll)
+  const videoOpacity = Math.max(0, 1 - scrollY / 550);
+
   return (
-    <div className="space-y-28 pb-20">
+    <div className="space-y-28 pb-20 relative">
+      {/* Background Loop Video Container */}
+      <div 
+        className="fixed inset-0 w-full h-screen overflow-hidden pointer-events-none z-0 transition-opacity duration-300 ease-out"
+        style={{ opacity: videoOpacity }}
+      >
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="w-full h-full object-cover scale-105 filter brightness-75 contrast-110"
+        >
+          <source
+            src="https://assets.mixkit.co/videos/preview/mixkit-sports-car-driving-on-a-road-at-night-41584-large.mp4"
+            type="video/mp4"
+          />
+          <source
+            src="https://cdn.coverr.co/videos/coverr-driving-a-car-on-a-highway-5645/1080p.mp4"
+            type="video/mp4"
+          />
+        </video>
+
+        {/* Gradient Overlay for Text Readability & Smooth Transition */}
+        <div className="absolute inset-0 bg-gradient-to-b from-dark-950/60 via-dark-950/80 to-dark-950" />
+      </div>
+
       {/* Hero Banner Section */}
-      <section className="relative pt-16 pb-24 overflow-hidden">
+      <section className="relative pt-20 pb-28 overflow-hidden z-10">
         {/* Glow Spotlight */}
-        <div className="absolute top-10 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-gradient-to-r from-cyan-500/20 via-indigo-500/20 to-purple-500/20 blur-[120px] rounded-full pointer-events-none" />
+        <div className="absolute top-10 left-1/2 -translate-x-1/2 w-[850px] h-[450px] bg-gradient-to-r from-cyan-500/25 via-indigo-500/25 to-purple-500/25 blur-[130px] rounded-full pointer-events-none" />
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-8 relative z-10">
           {/* Animated Pill Badge */}
@@ -41,7 +77,7 @@ export const Home = () => {
             Find Your Dream Vehicle Powered by <span className="text-gradient">AI Intelligence</span>
           </h1>
 
-          <p className="text-lg sm:text-xl text-slate-300 max-w-3xl mx-auto font-normal leading-relaxed">
+          <p className="text-lg sm:text-xl text-slate-200 max-w-3xl mx-auto font-normal leading-relaxed drop-shadow-md">
             Real-time inventory management with atomic ACID purchase security, multi-criteria filtering, and an intelligent recommendation matchmaker.
           </p>
 
@@ -85,7 +121,7 @@ export const Home = () => {
       </section>
 
       {/* Featured Vehicles Grid */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="flex flex-col md:flex-row items-start md:items-end justify-between mb-10">
           <div>
             <span className="text-xs font-extrabold text-cyan-400 uppercase tracking-widest flex items-center gap-1.5 mb-1">
@@ -114,7 +150,7 @@ export const Home = () => {
       </section>
 
       {/* Feature Highlights Grid */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="text-center max-w-2xl mx-auto mb-12 space-y-2">
           <span className="text-xs font-extrabold text-purple-400 uppercase tracking-widest">Enterprise Architecture</span>
           <h2 className="text-3xl font-extrabold text-white">Engineered for Reliability & Speed</h2>
