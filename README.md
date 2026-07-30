@@ -14,6 +14,39 @@ Key highlights:
 - **Multi-Filter & Debounced Search**: Fast O(1) B-tree compound indexing supporting make, model, VIN, price range, transmission, fuel, and paginated response streams.
 
 ---
+## My AI Usage
+
+### AI Tools Used
+- ChatGPT (OpenAI)
+- GitHub Copilot
+- Antigravity
+
+### How I Used AI
+
+#### ChatGPT
+I used ChatGPT to:
+- Understand the project requirements and plan the application architecture.
+- Design backend components such as models, controllers, routes, middleware, and services.
+- Debug issues related to Express.js, MongoDB, React, authentication, and API integration.
+- Improve code structure and generate documentation.
+
+#### GitHub Copilot
+I used GitHub Copilot to:
+- Speed up development with code autocompletion.
+- Suggest helper functions and improve coding efficiency.
+
+#### Antigravity
+I used Antigravity as an AI-assisted development tool to:
+- Generate and refine project code based on prompts.
+- Scaffold backend and frontend modules quickly.
+- Help create CRUD operations, UI components, and project structure.
+- Accelerate development while allowing me to review, modify, and test the generated code.
+
+### Reflection on AI Usage
+
+AI tools significantly improved my development workflow by helping me understand requirements, generate boilerplate code, debug errors, and speed up repetitive tasks. They allowed me to focus more on application logic and testing rather than writing every component from scratch.
+
+I reviewed, tested, and modified all AI-generated code to ensure it met the project requirements and worked correctly. AI acted as a development assistant that enhanced my productivity while I remained responsible for the final implementation, integration, and validation of the project.
 
 ## Technical Stack & Architecture
 
