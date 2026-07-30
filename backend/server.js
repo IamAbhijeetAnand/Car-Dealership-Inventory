@@ -2,9 +2,6 @@ const app = require("./app");
 const connectDB = require("./config/db");
 const env = require("./config/env");
 
-const Vehicle = require("./models/Vehicle");
-const seedDatabase = require("./database/seedDatabase");
-
 const PORT = process.env.PORT || env.PORT || 5000;
 
 let server;
@@ -14,23 +11,6 @@ const startServer = async () => {
   try {
     // Connect to MongoDB
     await connectDB();
-
-    // Auto Seed Database (Only if Empty)
-    try {
-      const vehicleCount = await Vehicle.countDocuments();
-
-      if (vehicleCount === 0) {
-        console.log("[Seed] Empty database detected...");
-        await seedDatabase();
-        console.log("[Seed] Database seeded successfully.");
-      } else {
-        console.log(
-          `[Seed] ${vehicleCount} vehicles found. Skipping seed.`
-        );
-      }
-    } catch (seedError) {
-      console.error("[Seed Error]", seedError);
-    }
 
     // Start Express Server
     server = app.listen(PORT, () => {
