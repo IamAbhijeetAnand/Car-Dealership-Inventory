@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext, useCallback } from 'react';
-import { fetchVehicles, purchaseVehicle } from '../services/vehicleService';
+import { fetchVehicles, purchaseVehicle, deleteVehicle } from '../services/vehicleService';
 import { VehicleCard } from '../components/vehicle/VehicleCard';
 import { VehicleFilterBar } from '../components/vehicle/VehicleFilterBar';
 import { RestockModal } from '../components/vehicle/RestockModal';
@@ -102,6 +102,18 @@ export const Inventory = () => {
     setTestDriveVehicleItem(vehicle);
   };
 
+  const handleDelete = async (id) => {
+    if (!window.confirm('Are you sure you want to delete this vehicle from inventory?')) return;
+    try {
+      await deleteVehicle(id);
+      addToast('Vehicle removed from inventory', 'success');
+      loadInventory();
+    } catch (err) {
+      const msg = err.response?.data?.message || err.message || 'Failed to delete vehicle';
+      addToast(msg, 'error');
+    }
+  };
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8 relative z-10">
       {/* Header */}
@@ -150,6 +162,7 @@ export const Inventory = () => {
               onBookTestDrive={handleBookTestDrive}
               isAdmin={isAdmin}
               onRestock={(vItem) => setRestockVehicleItem(vItem)}
+              onDelete={handleDelete}
             />
           ))}
         </div>

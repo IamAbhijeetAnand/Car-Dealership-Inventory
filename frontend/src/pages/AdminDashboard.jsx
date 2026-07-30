@@ -60,7 +60,8 @@ export const AdminDashboard = () => {
       addToast('Vehicle removed from inventory', 'success');
       loadData();
     } catch (err) {
-      addToast('Failed to delete vehicle', 'error');
+      const msg = err.response?.data?.message || err.message || 'Failed to delete vehicle';
+      addToast(msg, 'error');
     }
   };
 
