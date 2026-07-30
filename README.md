@@ -1,4 +1,5 @@
 # DrivePulse - Enterprise Car Dealership Inventory System
+Live Link - https://car-dealership-inventory-red.vercel.app/
 
 [![Stack](https://img.shields.io/badge/MERN-Node%20%7C%20Express%20%7C%20MongoDB%20%7C%20React-cyan)](https://drivepulse.com)
 [![Architecture](https://img.shields.io/badge/Architecture-Clean%20MVC%20%2B%20Services-blue)](#)
@@ -66,7 +67,7 @@ PORT=5000
 MONGO_URI=mongodb://127.0.0.1:27017/car_dealership_db
 JWT_SECRET=super_secret_enterprise_jwt_key_2026_change_in_prod
 JWT_EXPIRES_IN=7d
-CLIENT_URL=http://localhost:5173
+CLIENT_URL=https://car-dealership-inventory-red.vercel.app
 # Optional LLM integration
 GEMINI_API_KEY=
 OPENAI_API_KEY=
@@ -102,8 +103,10 @@ npm run dev        # Starts Vite dev server on http://localhost:5173
 - **Backend (Render)**:
   - Deploy Node.js web service listening on `process.env.PORT`.
   - Configure Environment Variables: `MONGO_URI`, `JWT_SECRET`, `CLIENT_URL`.
+  - https://car-dealership-inventory-46py.onrender.com/
 - **Frontend (Vercel)**:
   - Deploy React SPA with Vite build output (`dist`).
   - Configure rewrite rule to `index.html` for client-side routing.
+  - https://car-dealership-inventory-red.vercel.app/
 - **Database (MongoDB Atlas)**:
   - Configure IP Whitelist (`0.0.0.0/0` for Render app instances).
